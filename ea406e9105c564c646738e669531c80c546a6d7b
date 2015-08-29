@@ -22,6 +22,30 @@
       "revId": "ea406e9105c564c646738e669531c80c546a6d7b",
       "serverId": "56841c99-7c94-43d4-bf0b-cb4707e66d55",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f8eba960_2382e904",
+        "filename": "power/power.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1001416
+      },
+      "writtenOn": "2015-08-29T20:42:00Z",
+      "side": 1,
+      "message": "I actually wasn\u0027t aware that those were CM specific. I knew that there were some CM specific parts, but I am still in the process of digging through it all to find them. I mainly pulled these changes in because the libcryptfs_hw is needed with builds for d850/d855.",
+      "parentUuid": "f8eba960_c3efbde5",
+      "range": {
+        "startLine": 220,
+        "startChar": 0,
+        "endLine": 221,
+        "endChar": 36
+      },
+      "revId": "ea406e9105c564c646738e669531c80c546a6d7b",
+      "serverId": "56841c99-7c94-43d4-bf0b-cb4707e66d55",
+      "unresolved": false
     }
   ]
 }
