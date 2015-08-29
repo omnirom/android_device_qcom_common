@@ -129,11 +129,40 @@ void setOwners(char *path, int owner, int group)
     }
 }
 
+void init_alarm_boot_properties()
+{
+    char *alarm_file = "/proc/sys/kernel/boot_reason";
+    char buf[BUF_SIZE];
+
+    if(read_file2(alarm_file, buf, sizeof(buf))) {
+
+    /*
+     * Setup ro.alarm_boot value to true when it is RTC triggered boot up
+     * For existing PMIC chips, the following mapping applies
+     * for the value of boot_reason:
+     *
+     * 0 -> unknown
+     * 1 -> hard reset
+     * 2 -> sudden momentary power loss (SMPL)
+     * 3 -> real time clock (RTC)
+     * 4 -> DC charger inserted
+     * 5 -> USB charger insertd
+     * 6 -> PON1 pin toggled (for secondary PMICs)
+     * 7 -> CBLPWR_N pin toggled (for external power supply)
+     * 8 -> KPDPWR_N pin toggled (power key pressed)
+     */
+        if(buf[0] == '3')
+            property_set("ro.alarm_boot", "true");
+        else
+            property_set("ro.alarm_boot", "false");
+    }
+}
+
 /*
- * Setup HDMI related nodes & permissions. HDMI can be fb1 or fb2
+ * Setup Display related nodes & permissions. For HDMI, it can be fb1 or fb2
  * Loop through the sysfs nodes and determine the HDMI(dtv panel)
  */
-void set_hdmi_node_perms()
+void set_display_node_perms()
 {
     char panel_type[] = "dtv panel";
     char buf[BUF_SIZE];
@@ -145,6 +174,9 @@ void set_hdmi_node_perms()
             if(!strncmp(buf, panel_type, strlen(panel_type))) {
                 // Set appropriate permissions for the nodes
                 snprintf(tmp, sizeof(tmp), "%sfb%d/hpd", sys_fb_path, num);
+                setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/res_info", sys_fb_path, num);
                 setPerms(tmp, 0664);
                 setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
                 snprintf(tmp, sizeof(tmp), "%sfb%d/vendor_name", sys_fb_path,
@@ -162,8 +194,27 @@ void set_hdmi_node_perms()
                             num);
                 setPerms(tmp, 0664);
                 setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/s3d_mode", sys_fb_path,
+                            num);
+                setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
                 snprintf(tmp, sizeof(tmp), "%sfb%d/hdcp/tp", sys_fb_path, num);
                 setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/cec/enable", sys_fb_path, num);
+                setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/cec/logical_addr", sys_fb_path, num);
+                setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/cec/rd_msg", sys_fb_path, num);
+                setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/pa", sys_fb_path, num);
+                setPerms(tmp, 0664);
+                setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
+                snprintf(tmp, sizeof(tmp), "%sfb%d/cec/wr_msg", sys_fb_path, num);
+                setPerms(tmp, 0600);
                 setOwners(tmp, AID_SYSTEM, AID_SYSTEM);
                 snprintf(tmp, sizeof(tmp), "%sfb%d", dev_fb_path, num);
                 symlink(tmp, DEV_GFX_HDMI);
@@ -171,6 +222,26 @@ void set_hdmi_node_perms()
             }
         }
     }
+    // Set the permission for idle_time.
+    snprintf(tmp, sizeof(tmp), "%sfb0/idle_time", sys_fb_path);
+    setPerms(tmp, 0664);
+    setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
+    // Set write permission for dynamic_fps node.
+    snprintf(tmp, sizeof(tmp), "%sfb0/dynamic_fps", sys_fb_path);
+    setPerms(tmp, 0664);
+    setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
+    // Set permissions for dynamic partial update
+    snprintf(tmp, sizeof(tmp), "%sfb0/dyn_pu", sys_fb_path);
+    setPerms(tmp, 0664);
+    setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
+
+    snprintf(tmp, sizeof(tmp), "%sfb0/modes", sys_fb_path);
+    setPerms(tmp, 0664);
+    setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
+
+    snprintf(tmp, sizeof(tmp), "%sfb0/mode", sys_fb_path);
+    setPerms(tmp, 0664);
+    setOwners(tmp, AID_SYSTEM, AID_GRAPHICS);
 }
 
 static int check_rlim_action()
@@ -228,9 +299,10 @@ void vendor_load_properties()
     /* Define MSM family properties */
     init_msm_properties(msm_id, msm_ver, board_type);
 
+    init_alarm_boot_properties();
     /*check for coredump*/
     check_rlim_action();
 
-    /* Set Hdmi Node Permissions */
-    set_hdmi_node_perms();
+    /* Set Display Node Permissions */
+    set_display_node_perms();
 }

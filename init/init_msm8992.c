@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2013, The Linux Foundation. All rights reserved.
+   Copyright (c) 2014, The Linux Foundation. All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
@@ -36,59 +36,17 @@
 
 #include "init_msm.h"
 
-#define A2xx_OPEN_GLES_VERSION "131072"
-
 void init_msm_properties(unsigned long msm_id, unsigned long msm_ver, char *board_type)
 {
     char platform[PROP_VALUE_MAX];
     int rc;
-    prop_info *pi;
-    size_t valuelen;
+
+    UNUSED(msm_id);
+    UNUSED(msm_ver);
 
     rc = property_get("ro.board.platform", platform);
     if (!rc || !ISMATCH(platform, ANDROID_TARGET))
         return;
 
-    if (ISMATCH(board_type, "Liquid")) {
-        if (msm_ver == 196608) {
-            property_set(PROP_HWROTATE, "90");
-        }
-        property_set(PROP_LCDDENSITY, "160");
-    }
-    else if (ISMATCH(board_type, "MTP"))
-        property_set(PROP_LCDDENSITY, "240");
-    else {
-        if (msm_id == 109)
-            property_set(PROP_LCDDENSITY, "160");
-        else
-            property_set(PROP_LCDDENSITY, "240");
-    }
-    /* Populate system properties */
-    switch (msm_id) {
-        case 87:
-        case 123:
-            /* 8960 */
-            property_set("debug.composition.type", "dyn");
-
-            /* Overwrite ro.opengles.version value to 131072 */
-            /* 131072 is decimal of 0x20000 */
-            /* 8960 can only support GLES VERSION 2.0 */
-						valuelen = strlen(A2xx_OPEN_GLES_VERSION);
-            pi = (prop_info*) __system_property_find("ro.opengles.version");
-            if(pi != 0) {
-               __system_property_update(pi, A2xx_OPEN_GLES_VERSION, valuelen);
-            }
-            break;
-        case 138:
-        case 153:
-        case 154:
-        case 155:
-        case 156:
-        case 157:
-            /* 8064 V2 PRIME | 8930AB | 8630AB | 8230AB | 8030AB | 8960AB */
-            property_set("debug.composition.type", "c2d");
-            break;
-        default:
-            ; /* do nothing */
-    }
+    property_set(PROP_LCDDENSITY, "480");
 }
