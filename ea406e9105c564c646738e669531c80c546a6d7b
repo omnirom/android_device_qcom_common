@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f8eba960_c3efbde5",
+        "filename": "power/power.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1001391
+      },
+      "writtenOn": "2015-08-29T04:38:28Z",
+      "side": 1,
+      "message": "Not sure where you want to change it, but these do not exist in Omni (they\u0027re CM specific and are defined in libhardware/include/hardware/power.h).  There is also POWER_HINT_PROFILE which CM doesn\u0027t have",
+      "range": {
+        "startLine": 220,
+        "startChar": 0,
+        "endLine": 221,
+        "endChar": 36
+      },
+      "revId": "ea406e9105c564c646738e669531c80c546a6d7b",
+      "serverId": "56841c99-7c94-43d4-bf0b-cb4707e66d55",
+      "unresolved": false
+    }
+  ]
+}
