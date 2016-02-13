@@ -13,11 +13,7 @@ LOCAL_SRC_FILES := init_msm.c
 ifeq ($(LIBINIT_USE_MSM_DEFAULT),true)
   LOCAL_SRC_FILES += init_msmdefault.c
 else
-  ifneq ($(TARGET_LIBINIT_DEFINES_FILE),)
-    LOCAL_SRC_FILES += ../../../../$(TARGET_LIBINIT_DEFINES_FILE)
-  else
-    LOCAL_SRC_FILES += init_$(TARGET_BOARD_PLATFORM).c
-  endif
+  LOCAL_SRC_FILES += init_$(TARGET_BOARD_PLATFORM).c
 endif
 LOCAL_MODULE := libinit_msm
 include $(BUILD_STATIC_LIBRARY)
