@@ -51,6 +51,10 @@ on property:sys.vendor.dbg.coresight.enable=1
 on property:sys.vendor.dbg.coresight.enable=0
     write /mnt/vendor/persist/coresight/enable 0
 
+#Debug App FDA
+on property:vendor.fda.property=*
+    exec_background u:r:vendor-qti-testscripts:s0 -- /vendor/bin/sh /vendor/bin/init.fda.script.sh
+
 service DiagDaemon /system/vendor/bin/diag_socket_log -f /sdcard/ipaddress.txt
     class late_start
     oneshot
