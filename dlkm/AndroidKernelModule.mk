@@ -1,4 +1,4 @@
-ifneq ($(TARGET_BOARD_PLATFORM),taro)
+ifneq ($(call is-board-platform-in-list,taro parrot), true)
 
 # Get the number of CPU cores. This is the number of parallel jobs to be passed to make command.
 NCORES := $(shell grep -c ^processor /proc/cpuinfo)
