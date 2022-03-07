@@ -2467,18 +2467,10 @@ enable_schedstats()
 }
 
 coresight_config=`getprop persist.debug.coresight.config`
-coresight_stm_cfg_done=`getprop ro.dbg.coresight.stm_cfg_done`
 ftrace_disable=`getprop persist.debug.ftrace_events_disable`
 srcenable="enable"
 sinkenable="curr_sink"
 etr_size="0x2000000"
-
-#Android turns off tracing by default. Make sure tracing is turned on after boot is done
-if [ ! -z $coresight_stm_cfg_done ]
-then
-    #echo 1 > /sys/kernel/tracing/tracing_on
-    exit
-fi
 
 #add permission for block_size, mem_type, mem_size nodes to collect diag over QDSS by ODL
 #application by "oem_2902" group
